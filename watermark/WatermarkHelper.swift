@@ -11,6 +11,7 @@ import AVKit
 struct WatermarkHelper {
     
     enum WatermarkError: Error {
+        case cannotLoadResources
         case cannotAddTrack
         case cannotLoadVideoTrack(Error?)
         case cannotCopyOriginalAudioVideo(Error?)
@@ -229,12 +230,13 @@ struct WatermarkHelper {
         return try await executeSession(session)
     }
     
-    func exportIt() async throws {
+    func exportIt() async throws -> TimeInterval {
+        let timeStart = Date()
         guard
             let filePath = Bundle.main.path(forResource: "donut-spinning", ofType: "mp4"),
             let docUrl = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true),
             let watermarkImage = UIImage(systemName: "seal") else {
-            return
+            throw WatermarkError.cannotLoadResources
         }
         let videoAsset = AVAsset(url: URL(filePath: filePath))
         
@@ -242,6 +244,9 @@ struct WatermarkHelper {
         try? FileManager.default.removeItem(at: outputURL)
         print(outputURL)
         let result = try await addWatermarkTopDriver(inputVideo: videoAsset, outputURL: outputURL, watermark: watermarkImage)
+        let timeEnd = Date()
+        let duration = timeEnd.timeIntervalSince(timeStart)
         print(result)
+        return duration
     }
 }
