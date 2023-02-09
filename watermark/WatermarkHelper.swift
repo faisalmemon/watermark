@@ -213,8 +213,7 @@ struct WatermarkHelper {
         return try await executeSession(session)
     }
     
-    func exportIt() {
-        let bundle = Bundle.main
+    func exportIt() async throws {
         guard
             let filePath = Bundle.main.path(forResource: "donut-spinning", ofType: "mp4"),
             let docUrl = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true),
@@ -226,27 +225,7 @@ struct WatermarkHelper {
         let outputURL = docUrl.appending(component: "watermark-donut-spinning.mp4")
         try? FileManager.default.removeItem(at: outputURL)
         print(outputURL)
-        addWatermark(inputVideo: videoAsset, outputURL: outputURL, watermark: watermarkImage, handler: { (exportSession) in
-            guard let session = exportSession else {
-                // Error
-                return
-            }
-            switch session.status {
-            case .completed:
-                guard NSData(contentsOf: outputURL) != nil else {
-                    // Error
-                    return
-                }
-                
-                // Now you can find the video with the watermark in the location outputURL
-                
-            default:
-                // Error
-                if let error = session.error {
-                    print(error)
-                }
-                return
-            }
-        })
+        let result = try await addWatermarkTopDriver(inputVideo: videoAsset, outputURL: outputURL, watermark: watermarkImage)
+        print(result)
     }
 }

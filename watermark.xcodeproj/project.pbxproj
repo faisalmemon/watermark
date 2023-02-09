@@ -25,6 +25,7 @@
 		393986EF2994F6B00079BCBF /* WatermarkHelperOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkHelperOld.swift; sourceTree = "<group>"; };
 		393986F12995031A0079BCBF /* WatermarkHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkHelper.swift; sourceTree = "<group>"; };
 		393986F3299527790079BCBF /* donut-spinning.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "donut-spinning.mp4"; sourceTree = "<group>"; };
+		393986F529957AF20079BCBF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +58,7 @@
 		393986E02994F6910079BCBF /* watermark */ = {
 			isa = PBXGroup;
 			children = (
+				393986F529957AF20079BCBF /* Info.plist */,
 				393986E12994F6910079BCBF /* watermarkApp.swift */,
 				393986E32994F6910079BCBF /* ContentView.swift */,
 				393986EF2994F6B00079BCBF /* WatermarkHelperOld.swift */,
@@ -282,6 +284,7 @@
 				DEVELOPMENT_TEAM = 5Y3322JWHB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = watermark/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -311,6 +314,7 @@
 				DEVELOPMENT_TEAM = 5Y3322JWHB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = watermark/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

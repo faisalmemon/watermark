@@ -12,7 +12,9 @@ struct ContentView: View {
         VStack {
             Button("Add Watermark") {
                 let helper = WatermarkHelper()
-                helper.exportIt()
+                Task {
+                    try? await helper.exportIt()
+                }
             }
         }
         .padding()
