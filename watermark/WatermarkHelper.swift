@@ -148,7 +148,8 @@ struct WatermarkHelper {
             y: -height * 0.15,
             width: width,
             height: height)
-        
+        imageLayer.contents = watermark.cgImage
+        layer.addSublayer(imageLayer)
     }
 
     
@@ -209,7 +210,8 @@ struct WatermarkHelper {
         videoLayer.frame = CGRect(origin: .zero, size: transformAndSize.videoSize)
         let overlayLayer = CALayer()
         overlayLayer.frame = CGRect(origin: .zero, size: transformAndSize.videoSize)
-        
+        addImage(to: overlayLayer, watermark: watermark, videoSize: transformAndSize.videoSize)
+
         let outputLayer = CALayer()
         outputLayer.frame = CGRect(origin: .zero, size: transformAndSize.videoSize)
         outputLayer.addSublayer(videoLayer)
