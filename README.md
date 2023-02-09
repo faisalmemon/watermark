@@ -14,8 +14,8 @@ See the documentation for `exportIt` in the code base for its use and performanc
 
 The video
 
-![Spinning Donut](./watermark/donut-spinning.mp4)
+[Spinning Donut](./watermark/donut-spinning.mp4)
 
 is converted into
 
-![Watermarked Donut](./watermark-donut-spinning.mp4)
+[Watermarked Donut](./watermark-donut-spinning.mp4)
