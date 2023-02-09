@@ -138,6 +138,20 @@ struct WatermarkHelper {
         return instruction
     }
     
+    private func addImage(to layer: CALayer, watermark: UIImage, videoSize: CGSize) {
+        let imageLayer = CALayer()
+        let aspect: CGFloat = watermark.size.width / watermark.size.height
+        let width = videoSize.width
+        let height = width / aspect
+        imageLayer.frame = CGRect(
+            x: 0,
+            y: -height * 0.15,
+            width: width,
+            height: height)
+        
+    }
+
+    
     func composeVideo(composition: AVMutableComposition, videoComposition: AVMutableVideoComposition, compositionTrack: AVMutableCompositionTrack, assetTrack: AVAssetTrack, preferredTransform: CGAffineTransform) {
         
         let instruction = AVMutableVideoCompositionInstruction()
