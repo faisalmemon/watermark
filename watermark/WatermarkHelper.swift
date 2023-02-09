@@ -15,6 +15,7 @@ struct WatermarkHelper {
         case cannotLoadVideoTrack(Error?)
         case cannotCopyOriginalAudioVideo(Error?)
         case noVideoTrackPresent
+        case exportSessionCannotBeCreated
     }
     
     func addWatermark(inputVideo: AVAsset, outputURL: URL, watermark: UIImage, handler:@escaping (_ exportSession: AVAssetExportSession?)-> Void) {
@@ -94,38 +95,123 @@ struct WatermarkHelper {
         }
     }
     
-    func addWatermarkTopDriver(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetTrack? {
+    private func orientation(from transform: CGAffineTransform) -> (orientation: UIImage.Orientation, isPortrait: Bool) {
+        var assetOrientation = UIImage.Orientation.up
+        var isPortrait = false
+        if transform.a == 0 && transform.b == 1.0 && transform.c == -1.0 && transform.d == 0 {
+            assetOrientation = .right
+            isPortrait = true
+        } else if transform.a == 0 && transform.b == -1.0 && transform.c == 1.0 && transform.d == 0 {
+            assetOrientation = .left
+            isPortrait = true
+        } else if transform.a == 1.0 && transform.b == 0 && transform.c == 0 && transform.d == 1.0 {
+            assetOrientation = .up
+        } else if transform.a == -1.0 && transform.b == 0 && transform.c == 0 && transform.d == -1.0 {
+            assetOrientation = .down
+        }
+        
+        return (assetOrientation, isPortrait)
+    }
+    
+    func preferredTransformAndSize(compositionTrack: AVMutableCompositionTrack, assetTrack: AVAssetTrack) async throws -> (preferredTransform: CGAffineTransform, videoSize: CGSize) {
+        
+        let transform = try await assetTrack.load(.preferredTransform)
+        let videoInfo = orientation(from: transform)
+        
+        let videoSize: CGSize
+        let naturalSize = try await assetTrack.load(.naturalSize)
+        if videoInfo.isPortrait {
+            videoSize = CGSize(
+                width: naturalSize.height,
+                height: naturalSize.width)
+        } else {
+            videoSize = naturalSize
+        }
+        return (transform, videoSize)
+    }
+    
+    private func compositionLayerInstruction(for track: AVCompositionTrack, assetTrack: AVAssetTrack, preferredTransform: CGAffineTransform) -> AVMutableVideoCompositionLayerInstruction {
+        
+        let instruction = AVMutableVideoCompositionLayerInstruction(assetTrack: track)
+        instruction.setTransform(preferredTransform, at: .zero)
+        
+        return instruction
+    }
+    
+    func composeVideo(composition: AVMutableComposition, videoComposition: AVMutableVideoComposition, compositionTrack: AVMutableCompositionTrack, assetTrack: AVAssetTrack, preferredTransform: CGAffineTransform) {
+        
+        let instruction = AVMutableVideoCompositionInstruction()
+        instruction.timeRange = CMTimeRange(
+            start: .zero,
+            duration: composition.duration)
+        videoComposition.instructions = [instruction]
+        let layerInstruction = compositionLayerInstruction(
+            for: compositionTrack,
+            assetTrack: assetTrack, preferredTransform: preferredTransform)
+        instruction.layerInstructions = [layerInstruction]
+    }
+    
+    func exportSession(composition: AVMutableComposition, videoComposition: AVMutableVideoComposition, outputURL: URL) throws -> AVAssetExportSession {
+        guard let export = AVAssetExportSession(
+          asset: composition,
+          presetName: AVAssetExportPresetHighestQuality)
+          else {
+            print("Cannot create export session.")
+            throw WatermarkError.exportSessionCannotBeCreated
+        }
+        export.videoComposition = videoComposition
+        export.outputFileType = .mp4
+        export.outputURL = outputURL
+        return export
+    }
+    
+    func executeSession(_ session: AVAssetExportSession) async throws -> AVAssetExportSession.Status {
+
+        return try await withCheckedThrowingContinuation({
+            (continuation: CheckedContinuation<AVAssetExportSession.Status, Error>) in
+            session.exportAsynchronously {
+                DispatchQueue.main.async {
+                    if let error = session.error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: session.status)
+                    }
+                }
+            }
+        })
+    }
+    
+    func addWatermarkTopDriver(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetExportSession.Status {
         let composition = AVMutableComposition()
         let compositionTrack = try compositionAddMediaTrack(composition, withMediaType: .video)
         guard let videoAssetTrack = try await loadTrack(inputVideo: inputVideo, withMediaType: .video) else {
             throw WatermarkError.noVideoTrackPresent
         }
         try await bringOverVideoAndAudio(inputVideo: inputVideo, assetTrack: videoAssetTrack, compositionTrack: compositionTrack, composition: composition)
-        return nil
+        let transformAndSize = try await preferredTransformAndSize(compositionTrack: compositionTrack, assetTrack: videoAssetTrack)
+        compositionTrack.preferredTransform = transformAndSize.preferredTransform
+        
+        let videoLayer = CALayer()
+        videoLayer.frame = CGRect(origin: .zero, size: transformAndSize.videoSize)
+        let overlayLayer = CALayer()
+        overlayLayer.frame = CGRect(origin: .zero, size: transformAndSize.videoSize)
+        
+        let outputLayer = CALayer()
+        outputLayer.frame = CGRect(origin: .zero, size: transformAndSize.videoSize)
+        outputLayer.addSublayer(videoLayer)
+        outputLayer.addSublayer(overlayLayer)
+        
+        let videoComposition = AVMutableVideoComposition()
+        videoComposition.renderSize = transformAndSize.videoSize
+        videoComposition.frameDuration = CMTime(value: 1, timescale: 30)
+        videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(
+            postProcessingAsVideoLayer: videoLayer,
+            in: outputLayer)
+        composeVideo(composition: composition, videoComposition: videoComposition, compositionTrack: compositionTrack, assetTrack: videoAssetTrack, preferredTransform: transformAndSize.preferredTransform)
+        
+        let session = try exportSession(composition: composition, videoComposition: videoComposition, outputURL: outputURL)
+        return try await executeSession(session)
     }
-    
-    
-//    func addWatermark2(inputVideo: AVAsset,
-//                       outputURL: URL,
-//                       watermark: UIImage, handler: @escaping (_ exportSession: AVAssetExportSession?)-> Void) {
-//
-//        let composition = AVMutableComposition()
-//        guard
-//            let compositionTrack = composition.addMutableTrack(
-//                withMediaType: .video,
-//                preferredTrackID: kCMPersistentTrackID_Invalid)
-//        else {
-//            print("Something is wrong with the asset.")
-//            handler(nil)
-//            return
-//        }
-//        let assetTrack: AVAssetTrack
-//        let assetTrack2 = inputVideo.loadTracks(withMediaType: .video, completionHandler: { tracks, error in
-//
-//            assetTrack = tracks.first
-//        })
-//    }
-
     
     func exportIt() {
         let bundle = Bundle.main
@@ -136,7 +222,7 @@ struct WatermarkHelper {
             return
         }
         let videoAsset = AVAsset(url: URL(filePath: filePath))
-    
+        
         let outputURL = docUrl.appending(component: "watermark-donut-spinning.mp4")
         try? FileManager.default.removeItem(at: outputURL)
         print(outputURL)
