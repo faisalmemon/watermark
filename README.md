@@ -9,3 +9,13 @@ and leverages the Ray Wenderlich  materials:
 - [Kodeco.com](https://www.kodeco.com/6236502-avfoundation-tutorial-adding-overlays-and-animations-to-videos)
 
 See the documentation for `exportIt` in the code base for its use and performance.
+
+## Example
+
+The video
+
+![Spinning Donut](./watermark/donut-spinning.mp4)
+
+is converted into
+
+![Watermarked Donut](./watermark-donut-spinning.mp4)
