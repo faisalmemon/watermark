@@ -79,10 +79,10 @@ struct WatermarkHelper {
         })
     }
     
-    func bringOverVideoAndAudio(inputVideo: AVAsset, assetTrack: AVAssetTrack, compositionTrack: AVMutableCompositionTrack, composition: AVMutableComposition) throws {
+    func bringOverVideoAndAudio(inputVideo: AVAsset, assetTrack: AVAssetTrack, compositionTrack: AVMutableCompositionTrack, composition: AVMutableComposition) async throws {
         do {
             // 1
-            let timeRange = CMTimeRange(start: .zero, duration: inputVideo.duration)
+            let timeRange = await CMTimeRange(start: .zero, duration: try inputVideo.load(.duration))
             // 2
             try compositionTrack.insertTimeRange(timeRange, of: assetTrack, at: .zero)
             
