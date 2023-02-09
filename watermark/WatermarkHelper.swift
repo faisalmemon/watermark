@@ -56,22 +56,45 @@ struct WatermarkHelper {
         }
     }
     
-    func compositionAddVideoTrack(_ composition: AVMutableComposition) throws -> AVMutableCompositionTrack  {
+//    func compositionAddVideoTrack(_ composition: AVMutableComposition) throws -> AVMutableCompositionTrack  {
+//        guard let compositionTrack = composition.addMutableTrack(
+//            withMediaType: .video,
+//            preferredTrackID: kCMPersistentTrackID_Invalid) else {
+//            throw WatermarkError.cannotAddTrack
+//        }
+//        return compositionTrack
+//    }
+    
+    func compositionAddMediaTrack(_ composition: AVMutableComposition, withMediaType mediaType: AVMediaType) throws -> AVMutableCompositionTrack  {
         guard let compositionTrack = composition.addMutableTrack(
-            withMediaType: .video,
+            withMediaType: mediaType,
             preferredTrackID: kCMPersistentTrackID_Invalid) else {
             throw WatermarkError.cannotAddTrack
         }
         return compositionTrack
     }
     
-    func loadVideoTrack(inputVideo: AVAsset) async throws -> AVAssetTrack {
+//    func loadVideoTrack(inputVideo: AVAsset) async throws -> AVAssetTrack {
+//        return try await withCheckedThrowingContinuation({
+//            (continuation: CheckedContinuation<AVAssetTrack, Error>) in
+//            
+//            inputVideo.loadTracks(withMediaType: .video) { tracks, error in
+//                if let tracks = tracks, let firstTrack = tracks.first {
+//                    continuation.resume(returning: firstTrack)
+//                } else {
+//                    continuation.resume(throwing: WatermarkError.cannotLoadVideoTrack(error))
+//                }
+//            }
+//        })
+//    }
+    
+    func loadTrack(inputVideo: AVAsset, withMediaType mediaType: AVMediaType) async throws -> AVAssetTrack? {
         return try await withCheckedThrowingContinuation({
-            (continuation: CheckedContinuation<AVAssetTrack, Error>) in
+            (continuation: CheckedContinuation<AVAssetTrack?, Error>) in
             
-            inputVideo.loadTracks(withMediaType: .video) { tracks, error in
-                if let tracks = tracks, let firstTrack = tracks.first {
-                    continuation.resume(returning: firstTrack)
+            inputVideo.loadTracks(withMediaType: mediaType) { tracks, error in
+                if let tracks = tracks {
+                    continuation.resume(returning: tracks.first)
                 } else {
                     continuation.resume(throwing: WatermarkError.cannotLoadVideoTrack(error))
                 }
@@ -81,23 +104,13 @@ struct WatermarkHelper {
     
     func bringOverVideoAndAudio(inputVideo: AVAsset, assetTrack: AVAssetTrack, compositionTrack: AVMutableCompositionTrack, composition: AVMutableComposition) async throws {
         do {
-            // 1
             let timeRange = await CMTimeRange(start: .zero, duration: try inputVideo.load(.duration))
-            // 2
             try compositionTrack.insertTimeRange(timeRange, of: assetTrack, at: .zero)
-            
-            // 3
-            if let audioAssetTrack = inputVideo.tracks(withMediaType: .audio).first,
-               let compositionAudioTrack = composition.addMutableTrack(
-                withMediaType: .audio,
-                preferredTrackID: kCMPersistentTrackID_Invalid) {
-                try compositionAudioTrack.insertTimeRange(
-                    timeRange,
-                    of: audioAssetTrack,
-                    at: .zero)
+            if let audioAssetTrack = try await loadTrack(inputVideo: inputVideo, withMediaType: .audio) {
+                let compositionAudioTrack = try compositionAddMediaTrack(composition, withMediaType: .audio)
+                try compositionAudioTrack.insertTimeRange(timeRange, of: audioAssetTrack, at: .zero)
             }
         } catch {
-            // 4
             print(error)
             throw WatermarkError.cannotCopyOriginalAudioVideo(error)
         }
@@ -105,8 +118,8 @@ struct WatermarkHelper {
     
     func addWatermarkTopDriver(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetTrack? {
         let composition = AVMutableComposition()
-        let compositionTrack = try compositionAddVideoTrack(composition)
-        let videoAssetTrack = try await loadVideoTrack(inputVideo: inputVideo)
+        let compositionTrack = try compositionAddMediaTrack(composition, withMediaType: .video)
+        let videoAssetTrack = try await loadTrack(inputVideo: inputVideo, withMediaType: .video)
         return nil
     }
     
