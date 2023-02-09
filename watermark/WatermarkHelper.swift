@@ -10,6 +10,11 @@ import AVKit
 
 struct WatermarkHelper {
     
+    enum WatermarkError: Error {
+        case cannotAddTrack
+        case cannotLoadVideoTrack(Error?)
+    }
+    
     func addWatermark(inputVideo: AVAsset, outputURL: URL, watermark: UIImage, handler:@escaping (_ exportSession: AVAssetExportSession?)-> Void) {
         let mixComposition = AVMutableComposition()
         let asset = inputVideo
@@ -49,6 +54,58 @@ struct WatermarkHelper {
             handler(exportSession)
         }
     }
+    
+    func compositionAddVideoTrack(_ composition: AVMutableComposition) throws -> AVMutableCompositionTrack  {
+        guard let compositionTrack = composition.addMutableTrack(
+            withMediaType: .video,
+            preferredTrackID: kCMPersistentTrackID_Invalid) else {
+            throw WatermarkError.cannotAddTrack
+        }
+        return compositionTrack
+    }
+    
+    func loadVideoTrack(inputVideo: AVAsset) async throws -> AVAssetTrack {
+        return try await withCheckedThrowingContinuation({
+            (continuation: CheckedContinuation<AVAssetTrack, Error>) in
+            
+            inputVideo.loadTracks(withMediaType: .video) { tracks, error in
+                if let tracks = tracks, let firstTrack = tracks.first {
+                    continuation.resume(returning: firstTrack)
+                } else {
+                    continuation.resume(throwing: WatermarkError.cannotLoadVideoTrack(error))
+                }
+            }
+        })
+    }
+    func addWatermark3(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetTrack? {
+        let composition = AVMutableComposition()
+        let compositionTrack = try compositionAddVideoTrack(composition)
+        let videoAssetTrack = try await loadVideoTrack(inputVideo: inputVideo)
+        return nil
+    }
+    
+    
+//    func addWatermark2(inputVideo: AVAsset,
+//                       outputURL: URL,
+//                       watermark: UIImage, handler: @escaping (_ exportSession: AVAssetExportSession?)-> Void) {
+//
+//        let composition = AVMutableComposition()
+//        guard
+//            let compositionTrack = composition.addMutableTrack(
+//                withMediaType: .video,
+//                preferredTrackID: kCMPersistentTrackID_Invalid)
+//        else {
+//            print("Something is wrong with the asset.")
+//            handler(nil)
+//            return
+//        }
+//        let assetTrack: AVAssetTrack
+//        let assetTrack2 = inputVideo.loadTracks(withMediaType: .video, completionHandler: { tracks, error in
+//
+//            assetTrack = tracks.first
+//        })
+//    }
+
     
     func exportIt() {
         let bundle = Bundle.main
