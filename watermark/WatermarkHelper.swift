@@ -8,17 +8,35 @@
 import Foundation
 import AVKit
 
+enum WatermarkError: Error {
+    case cannotLoadResources
+    case cannotAddTrack
+    case cannotLoadVideoTrack(Error?)
+    case cannotCopyOriginalAudioVideo(Error?)
+    case noVideoTrackPresent
+    case exportSessionCannotBeCreated
+}
+
+struct Resource {
+    let videoAsset: AVAsset
+    let watermarkImage: UIImage
+    let outputURL: URL
+    
+    init() throws {
+        guard
+            let filePath = Bundle.main.path(forResource: "donut-spinning", ofType: "mp4"),
+            let docUrl = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true),
+            let image = UIImage(systemName: "seal") else {
+            throw WatermarkError.cannotLoadResources
+        }
+        watermarkImage = image
+        videoAsset = AVAsset(url: URL(filePath: filePath))
+        outputURL = docUrl.appending(component: "watermark-donut-spinning.mp4")
+    }
+}
+
 struct WatermarkHelper {
     
-    enum WatermarkError: Error {
-        case cannotLoadResources
-        case cannotAddTrack
-        case cannotLoadVideoTrack(Error?)
-        case cannotCopyOriginalAudioVideo(Error?)
-        case noVideoTrackPresent
-        case exportSessionCannotBeCreated
-    }
-   
     func compositionAddMediaTrack(_ composition: AVMutableComposition, withMediaType mediaType: AVMediaType) throws -> AVMutableCompositionTrack  {
         guard let compositionTrack = composition.addMutableTrack(
             withMediaType: mediaType,
@@ -102,11 +120,11 @@ struct WatermarkHelper {
     private func addImage(to layer: CALayer, watermark: UIImage, videoSize: CGSize) {
         let imageLayer = CALayer()
         let aspect: CGFloat = watermark.size.width / watermark.size.height
-        let width = videoSize.width
+        let width = videoSize.width / 4
         let height = width / aspect
         imageLayer.frame = CGRect(
-            x: 0,
-            y: -height * 0.15,
+            x: width,
+            y: 0,
             width: width,
             height: height)
         imageLayer.contents = watermark.cgImage
@@ -196,18 +214,11 @@ struct WatermarkHelper {
     /// - Returns: Time interval taken for processing.
     public func exportIt() async throws -> TimeInterval {
         let timeStart = Date()
-        guard
-            let filePath = Bundle.main.path(forResource: "donut-spinning", ofType: "mp4"),
-            let docUrl = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true),
-            let watermarkImage = UIImage(systemName: "seal") else {
-            throw WatermarkError.cannotLoadResources
-        }
-        let videoAsset = AVAsset(url: URL(filePath: filePath))
+        let resources = try Resource()
         
-        let outputURL = docUrl.appending(component: "watermark-donut-spinning.mp4")
-        try? FileManager.default.removeItem(at: outputURL)
-        print(outputURL)
-        let result = try await addWatermarkTopDriver(inputVideo: videoAsset, outputURL: outputURL, watermark: watermarkImage)
+        try? FileManager.default.removeItem(at: resources.outputURL)
+        print(resources.outputURL)
+        let result = try await addWatermarkTopDriver(inputVideo: resources.videoAsset, outputURL: resources.outputURL, watermark: resources.watermarkImage)
         let timeEnd = Date()
         let duration = timeEnd.timeIntervalSince(timeStart)
         print(result)

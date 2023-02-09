@@ -8,10 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		393986E22994F6910079BCBF /* watermarkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986E12994F6910079BCBF /* watermarkApp.swift */; };
-		393986E42994F6910079BCBF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986E32994F6910079BCBF /* ContentView.swift */; };
+		393986E42994F6910079BCBF /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986E32994F6910079BCBF /* MainView.swift */; };
 		393986E62994F6920079BCBF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393986E52994F6920079BCBF /* Assets.xcassets */; };
 		393986E92994F6920079BCBF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393986E82994F6920079BCBF /* Preview Assets.xcassets */; };
-		393986F02994F6B00079BCBF /* WatermarkHelperOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986EF2994F6B00079BCBF /* WatermarkHelperOld.swift */; };
 		393986F22995031A0079BCBF /* WatermarkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986F12995031A0079BCBF /* WatermarkHelper.swift */; };
 		393986F4299527B60079BCBF /* donut-spinning.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 393986F3299527790079BCBF /* donut-spinning.mp4 */; };
 /* End PBXBuildFile section */
@@ -19,10 +18,9 @@
 /* Begin PBXFileReference section */
 		393986DE2994F6910079BCBF /* watermark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = watermark.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		393986E12994F6910079BCBF /* watermarkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watermarkApp.swift; sourceTree = "<group>"; };
-		393986E32994F6910079BCBF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		393986E32994F6910079BCBF /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		393986E52994F6920079BCBF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		393986E82994F6920079BCBF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		393986EF2994F6B00079BCBF /* WatermarkHelperOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkHelperOld.swift; sourceTree = "<group>"; };
 		393986F12995031A0079BCBF /* WatermarkHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkHelper.swift; sourceTree = "<group>"; };
 		393986F3299527790079BCBF /* donut-spinning.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "donut-spinning.mp4"; sourceTree = "<group>"; };
 		393986F529957AF20079BCBF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -60,8 +58,7 @@
 			children = (
 				393986F529957AF20079BCBF /* Info.plist */,
 				393986E12994F6910079BCBF /* watermarkApp.swift */,
-				393986E32994F6910079BCBF /* ContentView.swift */,
-				393986EF2994F6B00079BCBF /* WatermarkHelperOld.swift */,
+				393986E32994F6910079BCBF /* MainView.swift */,
 				393986F12995031A0079BCBF /* WatermarkHelper.swift */,
 				393986F3299527790079BCBF /* donut-spinning.mp4 */,
 				393986E52994F6920079BCBF /* Assets.xcassets */,
@@ -149,10 +146,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				393986E42994F6910079BCBF /* ContentView.swift in Sources */,
+				393986E42994F6910079BCBF /* MainView.swift in Sources */,
 				393986F22995031A0079BCBF /* WatermarkHelper.swift in Sources */,
 				393986E22994F6910079BCBF /* watermarkApp.swift in Sources */,
-				393986F02994F6B00079BCBF /* WatermarkHelperOld.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
