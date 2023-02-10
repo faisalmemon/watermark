@@ -13,6 +13,7 @@
 		393986E92994F6920079BCBF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393986E82994F6920079BCBF /* Preview Assets.xcassets */; };
 		393986F22995031A0079BCBF /* WatermarkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986F12995031A0079BCBF /* WatermarkHelper.swift */; };
 		393986F4299527B60079BCBF /* donut-spinning.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 393986F3299527790079BCBF /* donut-spinning.mp4 */; };
+		393986F929965CD80079BCBF /* gazing.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 393986F829965CD80079BCBF /* gazing.m4v */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		393986F12995031A0079BCBF /* WatermarkHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkHelper.swift; sourceTree = "<group>"; };
 		393986F3299527790079BCBF /* donut-spinning.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "donut-spinning.mp4"; sourceTree = "<group>"; };
 		393986F529957AF20079BCBF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		393986F829965CD80079BCBF /* gazing.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = gazing.m4v; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				393986E12994F6910079BCBF /* watermarkApp.swift */,
 				393986E32994F6910079BCBF /* MainView.swift */,
 				393986F12995031A0079BCBF /* WatermarkHelper.swift */,
+				393986F829965CD80079BCBF /* gazing.m4v */,
 				393986F3299527790079BCBF /* donut-spinning.mp4 */,
 				393986E52994F6920079BCBF /* Assets.xcassets */,
 				393986E72994F6920079BCBF /* Preview Content */,
@@ -136,6 +139,7 @@
 				393986F4299527B60079BCBF /* donut-spinning.mp4 in Resources */,
 				393986E92994F6920079BCBF /* Preview Assets.xcassets in Resources */,
 				393986E62994F6920079BCBF /* Assets.xcassets in Resources */,
+				393986F929965CD80079BCBF /* gazing.m4v in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

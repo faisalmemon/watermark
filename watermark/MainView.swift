@@ -17,10 +17,10 @@ struct MainView: View {
         VStack {
             Text("Original Video")
             if duration != 0 {
-                VideoPlayer(player: AVPlayer(url:  Bundle.main.url(forResource: "donut-spinning", withExtension: "mp4")!))
+                VideoPlayer(player: AVPlayer(url:  Bundle.main.url(forResource: "gazing", withExtension: "m4v")!))
                     .frame(height: 70)
             } else {
-                VideoPlayer(player: AVPlayer(url:  Bundle.main.url(forResource: "donut-spinning", withExtension: "mp4")!))
+                VideoPlayer(player: AVPlayer(url:  Bundle.main.url(forResource: "gazing", withExtension: "m4v")!))
                     .frame(height: 400)
                 Text("Watermark")
                 Image(systemName: "seal")

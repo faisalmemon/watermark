@@ -24,14 +24,14 @@ struct Resource {
     
     init() throws {
         guard
-            let filePath = Bundle.main.path(forResource: "donut-spinning", ofType: "mp4"),
+            let filePath = Bundle.main.path(forResource: "gazing", ofType: "m4v"),
             let docUrl = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true),
             let image = UIImage(systemName: "seal") else {
             throw WatermarkError.cannotLoadResources
         }
         watermarkImage = image
         videoAsset = AVAsset(url: URL(filePath: filePath))
-        outputURL = docUrl.appending(component: "watermark-donut-spinning.mp4")
+        outputURL = docUrl.appending(component: "watermark-gazing.m4v")
     }
 }
 
@@ -154,7 +154,7 @@ struct WatermarkHelper {
             throw WatermarkError.exportSessionCannotBeCreated
         }
         export.videoComposition = videoComposition
-        export.outputFileType = .mp4
+        export.outputFileType = .m4v
         export.outputURL = outputURL
         return export
     }
