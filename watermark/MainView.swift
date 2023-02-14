@@ -15,34 +15,7 @@ struct MainView: View {
     @State var showProgressScreen = false
     
     var body: some View {
-<<<<<<< HEAD
-        VStack {
-            Text("Original Video")
-            if duration != 0 {
-                VideoPlayer(player: AVPlayer(url:  Bundle.main.url(forResource: "gazing", withExtension: "m4v")!))
-                    .frame(height: 70)
-            } else {
-                VideoPlayer(player: AVPlayer(url:  Bundle.main.url(forResource: "gazing", withExtension: "m4v")!))
-                    .frame(height: 400)
-                Text("Watermark")
-                Image(systemName: "seal")
-                    .frame(height: 20)
-            }
-            
-            if duration != 0 {
-                Text("Watermarked Video")
-                Text("Created after \(duration) seconds")
-
-                VideoPlayer(player: AVPlayer(url: try! Resource().outputURL))
-                    .frame(height: 400)
-            } else {
-                Button("Add Watermark") {
-                    let helper = WatermarkHelper()
-                    Task {
-                        if let exporter = try? await helper.exporterForWatermarkedVideo(progress: $progress) {
-                            _ = try? await exporter.export()
-                            duration = exporter.duration ?? 0.0
-=======
+        
         NavigationStack {
             VStack {
                 Text("Original Video")
@@ -73,7 +46,6 @@ struct MainView: View {
                                 duration = exporter.duration ?? 0.0
                                 showProgressScreen = false
                             }
->>>>>>> main
                         }
                     }.navigationDestination(isPresented: $showProgressScreen) {
                         ProgressVideoView(bindingProgress: $progress)
