@@ -161,18 +161,13 @@ struct WatermarkHelper {
     
     func executeSession(_ session: AVAssetExportSession) async throws -> AVAssetExportSession.Status {
 
-        return try await withCheckedThrowingContinuation({
-            (continuation: CheckedContinuation<AVAssetExportSession.Status, Error>) in
-            session.exportAsynchronously {
-                DispatchQueue.main.async {
-                    if let error = session.error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume(returning: session.status)
-                    }
-                }
-            }
-        })
+        await session.export()
+                
+        if let error = session.error {
+            throw error
+        } else {
+            return session.status
+        }
     }
     
     func addWatermarkTopDriver(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetExportSession.Status {
