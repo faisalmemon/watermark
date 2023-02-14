@@ -7,6 +7,7 @@
 
 import Foundation
 import AVKit
+import SwiftUI
 
 enum WatermarkError: Error {
     case cannotLoadResources
@@ -21,7 +22,7 @@ struct Resource {
     let videoAsset: AVAsset
     let watermarkImage: UIImage
     let outputURL: URL
-    
+        
     init() throws {
         guard
             let filePath = Bundle.main.path(forResource: "gazing", ofType: "m4v"),
@@ -159,23 +160,18 @@ struct WatermarkHelper {
         return export
     }
     
-    func executeSession(_ session: AVAssetExportSession) async throws -> AVAssetExportSession.Status {
-
-        return try await withCheckedThrowingContinuation({
-            (continuation: CheckedContinuation<AVAssetExportSession.Status, Error>) in
-            session.exportAsynchronously {
-                DispatchQueue.main.async {
-                    if let error = session.error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume(returning: session.status)
-                    }
-                }
-            }
-        })
+    func executeSession(_ session: AVAssetExportSession, progress: Binding<Double>) async throws -> AVAssetExportSession.Status {
+        
+        await session.export()
+                
+        if let error = session.error {
+            throw error
+        } else {
+            return session.status
+        }
     }
     
-    func addWatermarkTopDriver(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetExportSession.Status {
+    func sessionToWatermarkVideo(inputVideo: AVAsset, outputURL: URL, watermark: UIImage) async throws -> AVAssetExportSession {
         let composition = AVMutableComposition()
         let compositionTrack = try compositionAddMediaTrack(composition, withMediaType: .video)
         guard let videoAssetTrack = try await loadTrack(inputVideo: inputVideo, withMediaType: .video) else {
@@ -205,23 +201,45 @@ struct WatermarkHelper {
         composeVideo(composition: composition, videoComposition: videoComposition, compositionTrack: compositionTrack, assetTrack: videoAssetTrack, preferredTransform: transformAndSize.preferredTransform)
         
         let session = try exportSession(composition: composition, videoComposition: videoComposition, outputURL: outputURL)
-        return try await executeSession(session)
+        return session
     }
     
-    /// Creates a watermarked movie and saves it to the documents directory.
-    ///
-    /// For an 8 second video (251 frames), this code takes 2.56 seconds on iPhone 11 producing a high quality video at 30 FPS.
-    /// - Returns: Time interval taken for processing.
-    public func exportIt() async throws -> TimeInterval {
-        let timeStart = Date()
+    public func exporterForWatermarkedVideo(progress: Binding<Double>) async throws -> ObservableExporter {
         let resources = try Resource()
-        
         try? FileManager.default.removeItem(at: resources.outputURL)
-        print(resources.outputURL)
-        let result = try await addWatermarkTopDriver(inputVideo: resources.videoAsset, outputURL: resources.outputURL, watermark: resources.watermarkImage)
-        let timeEnd = Date()
-        let duration = timeEnd.timeIntervalSince(timeStart)
-        print(result)
-        return duration
+        let session = try await sessionToWatermarkVideo(inputVideo: resources.videoAsset, outputURL: resources.outputURL, watermark: resources.watermarkImage)
+        
+        let observableExporter = ObservableExporter(session: session, progress: progress)
+        return observableExporter
+    }
+}
+
+class ObservableExporter {
+    
+    var progressTimer: Timer?
+    let session: AVAssetExportSession
+    public let progress: Binding<Double>
+    public var duration: TimeInterval?
+    
+    init(session: AVAssetExportSession, progress: Binding<Double>) {
+        self.session = session
+        self.progress = progress
+    }
+    
+    func export() async throws -> AVAssetExportSession.Status {
+        progressTimer = Timer(timeInterval: 0.1, repeats: true, block: { timer in
+            self.progress.wrappedValue = Double(self.session.progress)
+        })
+        RunLoop.main.add(progressTimer!, forMode: .common)
+        let startDate = Date()
+        await session.export()
+        progressTimer?.invalidate()
+        let endDate = Date()
+        duration = endDate.timeIntervalSince(startDate)
+        if let error = session.error {
+            throw error
+        } else {
+            return session.status
+        }
     }
 }

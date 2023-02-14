@@ -16,7 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "207"
             endingLineNumber = "207"
-            landmarkName = "addWatermarkTopDriver(inputVideo:outputURL:watermark:)"
+            landmarkName = "exporterForWatermarkedVideo(progress:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -32,7 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "208"
             endingLineNumber = "208"
-            landmarkName = "addWatermarkTopDriver(inputVideo:outputURL:watermark:)"
+            landmarkName = "exporterForWatermarkedVideo(progress:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -140,7 +140,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "166"
             endingLineNumber = "166"
-            landmarkName = "executeSession(_:)"
+            landmarkName = "executeSession(_:progress:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -188,7 +188,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "169"
             endingLineNumber = "169"
-            landmarkName = "executeSession(_:)"
+            landmarkName = "executeSession(_:progress:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -204,7 +204,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "171"
             endingLineNumber = "171"
-            landmarkName = "executeSession(_:)"
+            landmarkName = "executeSession(_:progress:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
