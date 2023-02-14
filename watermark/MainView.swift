@@ -11,7 +11,7 @@ import AVKit
 struct MainView: View {
     
     @State var duration: TimeInterval = 0.0
-   
+    @State var progress = 0.0
     
     var body: some View {
         VStack {
@@ -37,13 +37,13 @@ struct MainView: View {
                 Button("Add Watermark") {
                     let helper = WatermarkHelper()
                     Task {
-                        if let processingTime = try? await helper.exportIt() {
-                            duration = processingTime
-                        } else {
-                            duration = 0.0
+                        if let exporter = try? await helper.exporterForWatermarkedVideo(progress: $progress) {
+                            _ = try? await exporter.export()
+                            duration = exporter.duration ?? 0.0
                         }
                     }
                 }
+                ProgressView(value: progress)
             }
         }
         .padding()
