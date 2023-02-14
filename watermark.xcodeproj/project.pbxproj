@@ -13,6 +13,7 @@
 		393986E92994F6920079BCBF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 393986E82994F6920079BCBF /* Preview Assets.xcassets */; };
 		393986F22995031A0079BCBF /* WatermarkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393986F12995031A0079BCBF /* WatermarkHelper.swift */; };
 		393986F4299527B60079BCBF /* donut-spinning.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 393986F3299527790079BCBF /* donut-spinning.mp4 */; };
+		39FAE84D299BB7B100C4A29E /* ProgressVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FAE84C299BB7B100C4A29E /* ProgressVideoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		393986F12995031A0079BCBF /* WatermarkHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkHelper.swift; sourceTree = "<group>"; };
 		393986F3299527790079BCBF /* donut-spinning.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "donut-spinning.mp4"; sourceTree = "<group>"; };
 		393986F529957AF20079BCBF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		39FAE84C299BB7B100C4A29E /* ProgressVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressVideoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				393986F529957AF20079BCBF /* Info.plist */,
 				393986E12994F6910079BCBF /* watermarkApp.swift */,
 				393986E32994F6910079BCBF /* MainView.swift */,
+				39FAE84C299BB7B100C4A29E /* ProgressVideoView.swift */,
 				393986F12995031A0079BCBF /* WatermarkHelper.swift */,
 				393986F3299527790079BCBF /* donut-spinning.mp4 */,
 				393986E52994F6920079BCBF /* Assets.xcassets */,
@@ -148,6 +151,7 @@
 			files = (
 				393986E42994F6910079BCBF /* MainView.swift in Sources */,
 				393986F22995031A0079BCBF /* WatermarkHelper.swift in Sources */,
+				39FAE84D299BB7B100C4A29E /* ProgressVideoView.swift in Sources */,
 				393986E22994F6910079BCBF /* watermarkApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
